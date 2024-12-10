@@ -1,6 +1,34 @@
 {
-    "saved_songs": [
-        "https://www.youtube.com/watch?v=2C9udvgNpPc",
-        "https://www.youtube.com/watch?v=pfiCNAc2AgU"
+    "playlists": [
+        {
+            "name": "eun.yeon lo-fi christmas",
+            "songs": [
+                {
+                    "name": "christmas jazz 1 🎅",
+                    "location": "https://www.youtube.com/watch?v=2C9udvgNpPc"
+                },
+                {
+                    "name": "christmas jazz 2 ❄️",
+                    "location": "https://www.youtube.com/watch?v=5OGHZpO8YwU"
+                },
+                {
+                    "name": "christmas songs 1 🎅",
+                    "location": "https://www.youtube.com/watch?v=QJabJJSzCeA"
+                },
+                {
+                    "name": "christmas jazz 3 🎅",
+                    "location": "https://www.youtube.com/watch?v=5ENLNZRKQJk"
+                }
+            ]
+        },
+        {
+            "name": "lo-fi girl",
+            "songs": [
+                {
+                    "name": "christmas lofi radio 🎄cozy beats to get festive to",
+                    "location": "https://www.youtube.com/watch?v=pfiCNAc2AgU"
+                }
+            ]
+        }
     ]
 }
