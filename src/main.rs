@@ -1,55 +1,11 @@
-use std::{fs, process::{Child, Command}, sync::mpsc::{self, Sender}, thread};
-use colored::Colorize;
-use crossterm::event::{self, Event, KeyCode, KeyEventKind};
-use serde_json::{from_reader, Value};
+use std::{sync::mpsc::{self, Sender}, thread};
+use crossterm::style::Stylize;
+use serde_json::Value;
+
 mod error;
 use error::RustyError;
-
-fn load_config() -> Value {
-    let file = fs::File::open("config.json").expect("file should open read only");
-    let json_config: Value = from_reader(file).expect("JSON was not well-formatted");
-    
-    return json_config
-}
-
-fn spawn_command(cmd: &str, args: &Vec<&str>) -> Result<Child, RustyError> {
-    let mut command = Command::new(cmd);
-    for arg in args.iter() {
-        command.arg(arg);
-    }
-    let cmd_result = command.spawn();
-    if cmd_result.is_ok() { Ok(cmd_result.unwrap()) }
-    else { Err(RustyError) }
-}
-
-fn get_pressed_key() -> Result<String, std::io::Error> {    
-    loop {
-        // Read the event
-        if let Event::Key(key_event) = event::read()? {
-            if key_event.kind == KeyEventKind::Press {
-                match key_event.code {
-                    KeyCode::Enter => { return Ok("enter".to_string()); },
-                    KeyCode::Right => { return Ok("right".to_string()); },
-                    KeyCode::Up => { return Ok("up".to_string()) },
-                    KeyCode::Down => { return Ok("down".to_string()) },
-                    KeyCode::Left => { return Ok("left".to_string()) },
-                    KeyCode::Esc | KeyCode::Char('q') => { return Ok("exit".to_string()) }
-                    KeyCode::Char('p') => { return Ok("pause".to_string()) }
-                    _ => {}
-                }
-            }
-        }
-    }
-}
-
-fn print_presentation(title: &str, options: &Vec<Value>, selected_index: usize) {
-    spawn_command("cmd", &vec!["/C", "cls"]).unwrap().wait().unwrap();    
-    println!("{}", title.green().bold());
-    for (index, elem) in options.iter().enumerate() {
-        if index == selected_index { println!("{} {}", "[X]".purple(), elem.get("name").unwrap().as_str().unwrap().red()) }
-        else { println!("{} {}", "[ ]".purple(), elem.get("name").unwrap().as_str().unwrap().red()) }
-    }
-}
+use utils::{get_pressed_key, load_config, print_presentation, spawn_command};
+mod utils;
 
 fn handle_song_selection_screen(list_of_songs: &Vec<Value>) -> Result<usize, RustyError> {
     let mut selected_song_index = 0;
@@ -74,7 +30,7 @@ fn handle_playlist_selection_screen(json_config: &Value) -> Result<(usize, &Vec<
     .ok_or(RustyError)?;
     let mut selected_playlist_index = 0;
     loop {
-        print_presentation("Choose CD", list_of_playlists, selected_playlist_index);
+        print_presentation(&"Choose CD".bold().magenta().to_string(), list_of_playlists, selected_playlist_index);
         match get_pressed_key().unwrap().as_str() {
             "up" => {
                 if selected_playlist_index < 1 { selected_playlist_index = 0 } else { selected_playlist_index -= 1 }
@@ -151,7 +107,7 @@ fn play_user_selection(user_selection: &(usize, &Vec<Value>)) {
             ]
         ).unwrap();
         
-        print_presentation(&format!("Playing {}", song_name), &vec![], 0);
+        print_presentation(&format!("{} {}", "Playing".red().bold(), song_name.bold()), &vec![], 0);
         
         //Waiting for MPV process to stop (q, left, right pressed or the song just finished normally)
         mpv_child.wait().unwrap();
