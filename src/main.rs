@@ -1,7 +1,6 @@
 use std::{sync::mpsc::{self, Sender}, thread};
 use crossterm::style::Stylize;
 use serde_json::Value;
-
 mod error;
 use error::RustyError;
 use utils::{get_pressed_key, load_config, print_presentation, spawn_command};
@@ -136,7 +135,17 @@ fn play_user_selection(user_selection: &(usize, &Vec<Value>)) {
     }
 }
 
+fn handle_closure() {
+    ctrlc::set_handler(move || {
+        spawn_command("cmd", &vec!["/C", "echo", "stop", ">", r"\\.\pipe\mpvsocket"]).unwrap();
+        std::process::exit(0);
+    })
+    .expect("Error setting Ctrl-C handler");
+}
+
 fn main() {
+    handle_closure();
+
     let json_config = load_config();
     let mut user_selection_result;
     loop {
