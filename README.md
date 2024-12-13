@@ -1,8 +1,10 @@
 # Rusty Player
 
-Performance-oriented utility that wraps [mpv](https://github.com/mpv-player/mpv) and [yt-dlp](https://github.com/yt-dlp/yt-dlp) into a CLI solution to play Youtube audios (local files too)
+Performance-oriented utility that wraps [mpv](https://github.com/mpv-player/mpv) and [yt-dlp](https://github.com/yt-dlp/yt-dlp) into a CLI solution to play Youtube audios (local files too).
 
-Nothing too fancy, I just don't want to launch a browser or any gui to listen to music.
+Requires both **mpv** and **yt-dlp** on your **PATH**.
+
+Nothing too fancy, I just don't want to launch a browser or any gui to listen to music and save some RAM while playing games.
 
 ## Controls
 - **q**, quit
