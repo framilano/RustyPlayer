@@ -1,5 +1,5 @@
-use std::{fs, process::{Child, Command}};
-use crossterm::{event::{self, Event, KeyCode, KeyEventKind}, style::Stylize};
+use std::{fs, io::stdout, process::{Child, Command}};
+use crossterm::{cursor::{MoveLeft, MoveTo}, event::{self, Event, KeyCode, KeyEventKind}, execute, style::Stylize, terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType}};
 use serde_json::{from_reader, Value};
 use crate::error::RustyError;
 
@@ -21,8 +21,11 @@ pub fn spawn_command(cmd: &str, args: &Vec<&str>) -> Result<Child, RustyError> {
 }
 
 pub fn get_pressed_key() -> Result<String, std::io::Error> {    
+    
     loop {
+        let _ = enable_raw_mode();
         if let Event::Key(key_event) = event::read()? {
+            let _ = disable_raw_mode();
             if key_event.kind == KeyEventKind::Press {
                 match key_event.code {
                     KeyCode::Enter => { return Ok("enter".to_string()); },
@@ -30,9 +33,11 @@ pub fn get_pressed_key() -> Result<String, std::io::Error> {
                     KeyCode::Up => { return Ok("up".to_string()) },
                     KeyCode::Down => { return Ok("down".to_string()) },
                     KeyCode::Left => { return Ok("left".to_string()) },
-                    KeyCode::Esc | KeyCode::Char('q') => { return Ok("exit".to_string()) }
+                    KeyCode::Esc | KeyCode::Char('q') | KeyCode::Char('c') => { return Ok("exit".to_string()) },
                     KeyCode::Char('p') => { return Ok("pause".to_string()) }
-                    _ => {}
+                    _ => {
+                        //println!("Pressed {}", key_event.code)
+                    }
                 }
             }
         }
@@ -40,9 +45,11 @@ pub fn get_pressed_key() -> Result<String, std::io::Error> {
 }
 
 pub fn print_presentation(title: &str, options: &Vec<Value>, selected_index: usize) {
-    spawn_command("cmd", &vec!["/C", "cls"]).unwrap().wait().unwrap();    
+    execute!(stdout(), Clear(ClearType::All)).unwrap();
+    execute!(stdout(), MoveTo(0, 0)).unwrap();
     println!("{}", title);
     for (index, elem) in options.iter().enumerate() {
+        execute!(stdout(), MoveLeft(100)).unwrap();
         if index == selected_index { println!("{} {}", "[X]".dark_blue(), elem.get("name").unwrap().as_str().unwrap().dark_red().bold()) }
         else { println!("{} {}", "[ ]".dark_blue(), elem.get("name").unwrap().as_str().unwrap().dark_red()) }
     }
