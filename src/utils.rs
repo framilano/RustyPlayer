@@ -18,16 +18,17 @@ pub fn load_config() -> Value {
         match std::env::consts::OS {
             "windows" => {
                 executable_path_str.truncate(og_len - "\\rusty-player.exe".len());
-
+                executable_path_str += "\\"
             },
             "linux" | "macos" => {
                 executable_path_str.truncate(og_len - "/rusty-player".len());
+                executable_path_str += "/"
             },
             _ => {
                 print!("Invalid env")
             }
         }
-        file = fs::File::open(format!("{}\\config.json", executable_path_str)).expect("file should open read only");
+        file = fs::File::open(format!("{}config.json", executable_path_str)).expect("file should open read only");
     }
     let json_config: Value = from_reader(file).expect("JSON was not well-formatted");
     
@@ -58,23 +59,23 @@ pub fn spawn_command(cmd: &str, args: &Vec<&str>) -> Result<Child, RustyError> {
 
 pub fn get_pressed_key() -> Result<String, std::io::Error> {    
     
+    let _ = enable_raw_mode();
     loop {
-        let _ = enable_raw_mode();
         if let Event::Key(key_event) = event::read()? {
-            let _ = disable_raw_mode();
             if key_event.kind == KeyEventKind::Press {
-                match key_event.code {
-                    KeyCode::Enter => { return Ok("enter".to_string()); },
-                    KeyCode::Right => { return Ok("right".to_string()); },
-                    KeyCode::Up => { return Ok("up".to_string()) },
-                    KeyCode::Down => { return Ok("down".to_string()) },
-                    KeyCode::Left => { return Ok("left".to_string()) },
-                    KeyCode::Esc | KeyCode::Char('q') | KeyCode::Char('c') => { return Ok("exit".to_string()) },
-                    KeyCode::Char('p') => { return Ok("pause".to_string()) }
-                    _ => {
-                        //println!("Pressed {}", key_event.code)
-                    }
-                }
+                let value: String = match key_event.code {
+                    KeyCode::Enter => "enter".to_string(),
+                    KeyCode::Right => "right".to_string(),
+                    KeyCode::Up => "up".to_string(),
+                    KeyCode::Down => "down".to_string(),
+                    KeyCode::Left => "left".to_string(),
+                    KeyCode::Esc | KeyCode::Char('q') | KeyCode::Char('c') => "exit".to_string(),
+                    KeyCode::Char('p') => "pause".to_string(),
+                    _ => {continue}
+                };
+
+                let _ = disable_raw_mode();
+                return Ok(value);
             }
         }
     }
