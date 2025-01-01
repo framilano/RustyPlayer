@@ -1,10 +1,21 @@
-use std::{fs, io::stdout, process::{Child, Command}};
+use std::{env::current_exe, fs::{self, File}, io::stdout, process::{Child, Command}};
 use crossterm::{cursor::{MoveLeft, MoveTo}, event::{self, Event, KeyCode, KeyEventKind}, execute, style::Stylize, terminal::{disable_raw_mode, enable_raw_mode, Clear, ClearType}};
 use serde_json::{from_reader, Value};
 use crate::error::RustyError;
 
 pub fn load_config() -> Value {
-    let file = fs::File::open("config.json").expect("file should open read only");
+    let current_path = current_exe().unwrap();
+    let executable_path = current_path.to_str().unwrap();
+    
+    let file: File;
+    if executable_path.contains("/target/debug") {
+        file = fs::File::open("config.json").expect("file should open read only");
+    } else {
+        let og_len = executable_path.len();
+        let mut executable_path_str = executable_path.to_string();
+        executable_path_str.truncate(og_len - "/rusty-player".len());
+        file = fs::File::open(format!("{}/config.json", executable_path_str)).expect("file should open read only");
+    }
     let json_config: Value = from_reader(file).expect("JSON was not well-formatted");
     
     return json_config
