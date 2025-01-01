@@ -11,7 +11,19 @@ pub fn load_config() -> Value {
 }
 
 pub fn spawn_command(cmd: &str, args: &Vec<&str>) -> Result<Child, RustyError> {
-    let mut command = Command::new(cmd);
+    let mut command: Command;
+    match std::env::consts::OS {
+        "windows" => {
+            command = Command::new("cmd");
+            command.arg("/C");
+            command.arg(cmd);
+        },
+        "linux" | "macos" => {
+            command = Command::new(cmd);
+        },
+        _ => return Err(RustyError),
+    }
+
     for arg in args.iter() {
         command.arg(arg);
     }
