@@ -8,13 +8,26 @@ pub fn load_config() -> Value {
     let executable_path = current_path.to_str().unwrap();
     
     let file: File;
-    if executable_path.contains("/target/debug") {
+    //Running program from vscode
+    if executable_path.contains("/target/debug") || executable_path.contains("\\target\\debug") {
         file = fs::File::open("config.json").expect("file should open read only");
     } else {
+    //Running program from compiled executable
         let og_len = executable_path.len();
         let mut executable_path_str = executable_path.to_string();
-        executable_path_str.truncate(og_len - "/rusty-player".len());
-        file = fs::File::open(format!("{}/config.json", executable_path_str)).expect("file should open read only");
+        match std::env::consts::OS {
+            "windows" => {
+                executable_path_str.truncate(og_len - "\\rusty-player.exe".len());
+
+            },
+            "linux" | "macos" => {
+                executable_path_str.truncate(og_len - "/rusty-player".len());
+            },
+            _ => {
+                print!("Invalid env")
+            }
+        }
+        file = fs::File::open(format!("{}\\config.json", executable_path_str)).expect("file should open read only");
     }
     let json_config: Value = from_reader(file).expect("JSON was not well-formatted");
     
@@ -67,9 +80,14 @@ pub fn get_pressed_key() -> Result<String, std::io::Error> {
     }
 }
 
-pub fn print_presentation(title: &str, options: &Vec<Value>, selected_index: usize) {
-    execute!(stdout(), Clear(ClearType::All)).unwrap();
+pub fn clear_screen() {
+    if std::env::consts::OS == "windows" { spawn_command("cls", &vec![]).unwrap().wait().unwrap(); }
+    else { execute!(stdout(), Clear(ClearType::All)).unwrap(); }
     execute!(stdout(), MoveTo(0, 0)).unwrap();
+}
+
+pub fn print_presentation(title: &str, options: &Vec<Value>, selected_index: usize) {
+    clear_screen();
     println!("{}", title);
     for (index, elem) in options.iter().enumerate() {
         execute!(stdout(), MoveLeft(100)).unwrap();
