@@ -1,36 +1,15 @@
 {
     "cds": [
         {
-            "name": "eun.yeon lo-fi christmas",
-            "songs": [
-                {
-                    "name": "merry christmas gromit!",
-                    "location": "https://www.youtube.com/watch?v=Rj4r0FQLmvk"
-                },
-                {
-                    "name": "christmas jazz 1 🎅",
-                    "location": "https://www.youtube.com/watch?v=2C9udvgNpPc"
-                },
-                {
-                    "name": "christmas jazz 2 ❄️",
-                    "location": "https://www.youtube.com/watch?v=5OGHZpO8YwU"
-                },
-                {
-                    "name": "christmas songs 1 🎅",
-                    "location": "https://www.youtube.com/watch?v=QJabJJSzCeA"
-                },
-                {
-                    "name": "christmas jazz 3 🎅",
-                    "location": "https://www.youtube.com/watch?v=5ENLNZRKQJk"
-                }
-            ]
-        },
-        {
             "name": "lo-fi girl",
             "songs": [
                 {
-                    "name": "christmas lofi radio 🎄cozy beats to get festive to",
-                    "location": "https://www.youtube.com/watch?v=pfiCNAc2AgU"
+                    "name": "lofi hip hop radio 📚 beats to relax/study to",
+                    "location": "https://www.youtube.com/watch?v=jfKfPfyJRdk"
+                },
+                {
+                    "name": "lofi hip hop radio 💤 beats to sleep/chill to",
+                    "location": "https://www.youtube.com/watch?v=28KRPhVzCus"
                 }
             ]
         }
