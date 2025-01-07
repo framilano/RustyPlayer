@@ -23,13 +23,8 @@ jobs:
     - name: Build
       run: cargo build --release --verbose
 
-    - name: Create tar.gz
-      run: |
-        mkdir artifacts
-        copy target\release\rusty-player.exe artifacts\
-
     - name: Upload artifact
       uses: actions/upload-artifact@v4.5.0
       with:
         name: rusty-player
-        path: artifacts\rusty-player.tar.gz
+        path: target\release\rusty-player.exe
