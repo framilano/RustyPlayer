@@ -30,7 +30,7 @@ jobs:
       run: cp config.json artifact/ 
     
     - name: Copy executable to artifact folder
-      run: cp target/release/rusty-player artifact/ 
+      run: cp target/release/rusty-player.exe artifact/ 
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4.5.0
