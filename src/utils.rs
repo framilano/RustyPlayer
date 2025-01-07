@@ -3,14 +3,15 @@ use crossterm::{cursor::{MoveLeft, MoveTo}, event::{self, Event, KeyCode, KeyEve
 use serde_json::{from_reader, Value};
 use crate::error::RustyError;
 
-pub fn load_config() -> Value {
+pub fn load_config() -> Result<Value, RustyError> {
     let current_path = current_exe().unwrap();
     let executable_path = current_path.to_str().unwrap();
     
-    let file: File;
+    let file: Result<File, std::io::Error>;
     //Running program from vscode
     if executable_path.contains("/target/debug") || executable_path.contains("\\target\\debug") {
-        file = fs::File::open("config.json").expect("file should open read only");
+        file = fs::File::open("config.json");
+        if file.is_err() { return Err(RustyError); }
     } else {
     //Running program from compiled executable
         let og_len = executable_path.len();
@@ -28,11 +29,12 @@ pub fn load_config() -> Value {
                 print!("Invalid env")
             }
         }
-        file = fs::File::open(format!("{}config.json", executable_path_str)).expect("file should open read only");
+        file = fs::File::open(format!("{}config.json", executable_path_str));
+        if file.is_err() { return Err(RustyError); }
     }
-    let json_config: Value = from_reader(file).expect("JSON was not well-formatted");
+    let json_config: Value = from_reader(file.unwrap()).expect("JSON was not well-formatted");
     
-    return json_config
+    return Ok(json_config)
 }
 
 pub fn spawn_command(cmd: &str, args: &Vec<&str>) -> Result<Child, RustyError> {

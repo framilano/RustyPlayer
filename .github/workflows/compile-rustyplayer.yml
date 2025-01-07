@@ -22,17 +22,8 @@ jobs:
     - name: Build
       run: cargo build --release --verbose
 
-    - name: Create tar.gz
-      run: |
-        mkdir -p artifacts
-        cp target/release/rusty-player artifacts/
-        tar -czvf artifacts/rusty-player.tar.gz -C artifacts rusty-player
-
-    - name: Run tests
-      run: cargo test --verbose
-
     - name: Upload artifact
       uses: actions/upload-artifact@v4.5.0
       with:
         name: rusty-player
-        path: artifacts/rusty-player.tar.gz
+        path: artifacts/rusty-player.zip

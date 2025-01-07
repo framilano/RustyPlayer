@@ -107,9 +107,16 @@ fn play_user_selection(user_selection: &(usize, &Vec<Value>)) {
 fn main() {
 
     let json_config = load_config();
+    if json_config.is_err() {
+        println!("Missing config file next to rust-player executable...");
+        return;
+    }
+
+    let config_file = json_config.unwrap();
+
     let mut user_selection_result;
     loop {
-        user_selection_result = handle_playlist_selection_screen(&json_config);
+        user_selection_result = handle_playlist_selection_screen(&config_file);
 
         if user_selection_result.is_ok() {
             play_user_selection(&user_selection_result.unwrap());
