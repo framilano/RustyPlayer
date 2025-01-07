@@ -12,7 +12,7 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v4.2.2
 
     - name: Set up Rust
       uses: actions-rs/toolchain@v1
@@ -32,7 +32,7 @@ jobs:
       run: cargo test --verbose
 
     - name: Upload artifact
-      uses: actions/upload-artifact@v2
+      uses: actions/upload-artifact@v4.5.0
       with:
         name: rusty-player
         path: artifacts/rusty-player.tar.gz
